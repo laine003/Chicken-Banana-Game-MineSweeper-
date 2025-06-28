@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-const bananaUrl = 'https://thumbs.dreamstime.com/b/bunch-bananas-6175887.jpg?w=768';
-const chickenUrl = 'https://thumbs.dreamstime.com/z/full-body-brown-chicken-hen-standing-isolated-white-backgroun-background-use-farm-animals-livestock-theme-49741285.jpg?ct=jpeg';
+const bananaUrl = 'https://i.pinimg.com/736x/5e/f5/47/5ef54790ca25b57922d3c3e8301dc5bf.jpg';
+const chickenUrl = 'https://i.pinimg.com/736x/39/87/c7/3987c71143aaeae4d8d4c7951cc7f805.jpg';
 
 const imageUrls = {
   banana: bananaUrl,
