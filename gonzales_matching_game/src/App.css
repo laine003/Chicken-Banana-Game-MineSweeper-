@@ -1,0 +1,48 @@
+div{
+  background-color: #c3d7d6;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 5px;
+  width: 600px;
+  height: 600px;
+}
+
+.square-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.square {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 20%;
+  overflow: hidden;
+  background-color: #F7B5B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight:500;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.square:hover {
+  background-color: #F4F7A4; 
+}
+
+.turn-header {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
