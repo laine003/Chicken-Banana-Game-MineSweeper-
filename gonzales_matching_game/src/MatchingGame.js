@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-const bananaUrl = 'https://i.pinimg.com/736x/5e/f5/47/5ef54790ca25b57922d3c3e8301dc5bf.jpg';
-const chickenUrl = 'https://i.pinimg.com/736x/39/87/c7/3987c71143aaeae4d8d4c7951cc7f805.jpg';
+const bananaUrl = 'https://cdn.dribbble.com/userupload/8375514/file/original-90dcc568e41965849c37a596a1f4bc3e.png?crop=0x284-2133x1884&format=webp&resize=400x300&vertical=center';
+const chickenUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQgxghfvWm2QPVl2ACaYYXZxBDx_cT1YGPVg&s';
 
 const imageUrls = {
   banana: bananaUrl,
@@ -21,14 +21,10 @@ function shuffleArray(array) {
 function Matchy() {
   const [images, setImages] = useState([]);
   const [flipped, setFlipped] = useState(Array(36).fill(false));
-  const [player1, setPlayer1] = useState(null); 
-  const [player2, setPlayer2] = useState(null);
-  const [turn, setTurn] = useState(null); 
   const [clickedBanana, setClickedBanana] = useState([]);
   const [clickedChicken, setClickedChicken] = useState([]);
-  const [mistake, setMistake] = useState(false);
-  const [winner, setWinner] = useState('');
-  const [gameOver, setGameOver] = useState(false);
+  const [playerChoice, setPlayerChoice] = useState(null); 
+  const [gameOver, setGameOver] = useState(false); 
 
   useEffect(() => {
     const bananaTiles = Array(18).fill(bananaUrl);
@@ -37,77 +33,68 @@ function Matchy() {
     setImages(shuffled);
   }, []);
 
-  const handleCharacterSelect = (choice) => {
-    const other = choice === 'banana' ? 'chicken' : 'banana';
-    setPlayer1(choice);
-    setPlayer2(other);
-    setTurn(choice); 
-  };
-
   const handleTileClick = (index) => {
-    if (flipped[index] || gameOver || !turn) return;
+    if (flipped[index] || gameOver) return; 
 
     const currentImage = images[index];
-    const currentPlayerUrl = imageUrls[turn];
+    const isBanana = currentImage === bananaUrl;
+    const isChicken = currentImage === chickenUrl;
 
     const newFlipped = [...flipped];
     newFlipped[index] = true;
     setFlipped(newFlipped);
 
-    if (currentImage !== currentPlayerUrl) {
-      // Mistake made
-      setMistake(true);
-      setGameOver(true);
-      setWinner(turn === 'banana' ? 'chicken' : 'banana');
+    if (playerChoice === 'banana' && isBanana) {
+      setClickedBanana((prev) => [...prev, index]);
+    } else if (playerChoice === 'chicken' && isChicken) {
+      setClickedChicken((prev) => [...prev, index]);
     } else {
-      if (turn === 'banana') {
-        const newClicks = [...clickedBanana, index];
-        setClickedBanana(newClicks);
-        if (newClicks.length === 18) {
-          setGameOver(true);
-          setWinner('banana');
-          return;
-        }
-      } else {
-        const newClicks = [...clickedChicken, index];
-        setClickedChicken(newClicks);
-        if (newClicks.length === 18) {
-          setGameOver(true);
-          setWinner('chicken');
-          return;
-        }
-      }
-    
-      setTurn(turn === 'banana' ? 'chicken' : 'banana');
+      setGameOver(true); 
     }
+  };
+
+  const getProgressPercentage = (clickedTiles) => {
+    return ((clickedTiles.length / 18) * 100).toFixed(2);
+  };
+
+  const handlePlayerChoice = (choice) => {
+    setPlayerChoice(choice);
   };
 
   return (
     <div className="container">
       <h1>🐔 Chicken vs Banana 🍌</h1>
 
-      {!player1 && (
-        <div className="player-select">
-          <p>Select your character (Player 1):</p>
-          <button onClick={() => handleCharacterSelect('banana')}>🍌 Banana</button>
-          <button onClick={() => handleCharacterSelect('chicken')}>🐔 Chicken</button>
+      {playerChoice === null ? (
+        <div className="player-choice">
+          <button onClick={() => handlePlayerChoice('banana')}>Choose Banana</button>
+          <button onClick={() => handlePlayerChoice('chicken')}>Choose Chicken</button>
         </div>
-      )}
-
-      {player1 && !gameOver && (
-        <div className="turn-header">
-          <p>Player 1: <strong>{player1.toUpperCase()}</strong> | Player 2: <strong>{player2.toUpperCase()}</strong></p>
-          <h2>🕹️ It's {turn.toUpperCase()}'s turn</h2>
+      ) : (
+        <div className="progress">
+          {playerChoice === 'banana' && (
+            <div>
+              <strong>Banana Progress: </strong>
+              <span>{getProgressPercentage(clickedBanana)}%</span>
+            </div>
+          )}
+          {playerChoice === 'chicken' && (
+            <div>
+              <strong>Chicken Progress: </strong>
+              <span>{getProgressPercentage(clickedChicken)}%</span>
+            </div>
+          )}
         </div>
       )}
 
       {gameOver && (
-        <h2 className="result">
-          🎉 Winner: {winner.toUpperCase()}!{" "}
-          {mistake
-            ? `(Opponent clicked the wrong tile)`
-            : `(Clicked all 18 correctly)`}
-        </h2>
+        <div className="game-over">
+          {playerChoice === 'banana' ? (
+            <h2>Oops! You clicked a Chicken tile. Chicken Wins!</h2>
+          ) : (
+            <h2>Oops! You clicked a Banana tile. Banana Wins!</h2>
+          )}
+        </div>
       )}
 
       <div className="grid">
@@ -116,6 +103,7 @@ function Matchy() {
             key={index}
             className={`square ${flipped[index] ? 'flipped' : ''}`}
             onClick={() => handleTileClick(index)}
+            style={{ pointerEvents: playerChoice === null ? 'none' : 'auto' }} 
           >
             {flipped[index] ? (
               <img src={img} alt="Tile" className="square-img" />
